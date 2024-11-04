@@ -1,28 +1,27 @@
 pipeline {
     agent any 
 
+    environment {
+        DOCKER_CREDENTIALS_ID = 'wilsonbolledula/******'  // Replace with the exact credentials ID in Jenkins
+        DOCKER_IMAGE = 'wilsonbolledula/my-kube1'         // Your Docker Hub repository and image tag
+    }
+
     stages {
         stage('Build') {
             steps {
                 script {
-                    // Build your Docker image
-                    bat 'docker build -t my-kube1 .'
+                    bat "docker build -t %DOCKER_IMAGE% ."
                 }
             }
         }
-        stage('Test') {
+        stage('Push Docker Image') {
             steps {
                 script {
-                    // Run tests here if you have any
-                    echo 'Running tests...'
-                }
-            }
-        }
-        stage('Deploy') {
-            steps {
-                script {
-                    // Deploy your Docker image
-                    echo 'Deploying application...'
+                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        // Login to Docker Hub and push the image
+                        bat 'docker login -u %DOCKER_USER% -p %DOCKER_PASS%'
+                        bat "docker push %DOCKER_IMAGE%"
+                    }
                 }
             }
         }
