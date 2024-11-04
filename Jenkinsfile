@@ -2,9 +2,11 @@ pipeline {
     agent any 
 
     environment {
-        DOCKER_CREDENTIALS_ID = 'dockerhub'                  // Docker credentials ID
-        DOCKER_IMAGE = 'wilsonbolledula/my-kube1'            // Docker Hub repository and image tag
-        HTTP_PROXY = 'http://your.proxy.server:port'         // Actual HTTP proxy
+        DOCKER_CREDENTIALS_ID = 'dockerhub'                   // Docker credentials ID
+        DOCKER_IMAGE = 'wilsonbolledula/my-kube1'             // Docker Hub repository and image tag
+        HTTP_PROXY = 'http://actual.proxy.server:8080'        // Replace with actual HTTP proxy
+        HTTPS_PROXY = 'http://actual.proxy.server:8080'       // Replace with actual HTTPS proxy
+        NO_PROXY = 'localhost,127.0.0.1,192.168.49.2'         // Include Minikube IP here
     }
 
     stages {
@@ -39,10 +41,12 @@ pipeline {
                     '''
 
                     // Start Minikube with proxy settings
+                    bat '''
                     minikube start --docker-env HTTP_PROXY=%HTTP_PROXY% \
                     --docker-env HTTPS_PROXY=%HTTPS_PROXY% \
                     --docker-env NO_PROXY=%NO_PROXY% \
                     --kubernetes-version=v1.30.0
+                    '''
                 }
             }
         }
