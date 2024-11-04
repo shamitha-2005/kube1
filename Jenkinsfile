@@ -39,19 +39,10 @@ pipeline {
                     '''
 
                     // Start Minikube with proxy settings
-                    def minikubeStartCommand = """
-                    minikube start --image-repository=mirror.gcr.io \
-                        --docker-env HTTP_PROXY=%HTTP_PROXY% \
-                        --docker-env HTTPS_PROXY=%HTTPS_PROXY% \
-                        --docker-env NO_PROXY=%NO_PROXY% \
-                        --extra-config=apiserver.enable-admission-plugins="" \
-                        --addons=none
-                    """
-
-                    // Retry Minikube start if it fails initially
-                    retry(3) {
-                        bat minikubeStartCommand
-                    }
+                    minikube start --docker-env HTTP_PROXY=%HTTP_PROXY% \
+                    --docker-env HTTPS_PROXY=%HTTPS_PROXY% \
+                    --docker-env NO_PROXY=%NO_PROXY% \
+                    --kubernetes-version=v1.30.0
                 }
             }
         }
