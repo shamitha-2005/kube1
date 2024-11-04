@@ -42,7 +42,8 @@ pipeline {
 
                     // Start Minikube with proxy settings
                     bat '''
-                    minikube start --docker-env HTTP_PROXY=http://<IP_ADDRESS>:8080 --docker-env HTTPS_PROXY=http://<IP_ADDRESS>:8080 --docker-env NO_PROXY=localhost,127.0.0.1,192.168.49.2
+                    minikube start --docker-env HTTP_PROXY=http://actual.proxy.server:8080 --docker-env HTTPS_PROXY=http://actual.proxy.server:8080 --docker-env NO_PROXY=localhost,127.0.0.1,192.168.49.2
+                    '''
                 }
             }
         }
@@ -53,7 +54,7 @@ pipeline {
                     // Enable required Minikube addons
                     bat '''
                     minikube addons enable storage-provisioner || exit 0
-                    minikube addons enable default-storageclass || exit 0
+                    minikube addons enable `default-storageclass` || exit 0
                     '''
                 }
             }
