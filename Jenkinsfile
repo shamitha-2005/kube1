@@ -4,8 +4,8 @@ pipeline {
     environment {
         DOCKER_CREDENTIALS_ID = 'dockerhub'                   // Docker credentials ID
         DOCKER_IMAGE = 'wilsonbolledula/my-kube1'             // Docker Hub repository and image tag
-        HTTP_PROXY = 'http://actual.proxy.server:8084'        // Replace with actual HTTP proxy
-        HTTPS_PROXY = 'http://actual.proxy.server:8084'       // Replace with actual HTTPS proxy
+        HTTP_PROXY = 'http://actual.proxy.server:8080'        // Replace with actual HTTP proxy
+        HTTPS_PROXY = 'http://actual.proxy.server:8080'       // Replace with actual HTTPS proxy
         NO_PROXY = 'localhost,127.0.0.1,192.168.49.2'         // Include Minikube IP here
     }
 
