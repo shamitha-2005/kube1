@@ -2,7 +2,7 @@ pipeline {
     agent any 
 
     environment {
-        DOCKER_CREDENTIALS_ID = 'wilsonbolledula/******'  // Replace with the exact credentials ID in Jenkins
+        DOCKER_CREDENTIALS_ID = 'dockerhub'               // Use the correct credentials ID from Jenkins
         DOCKER_IMAGE = 'wilsonbolledula/my-kube1'         // Your Docker Hub repository and image tag
     }
 
