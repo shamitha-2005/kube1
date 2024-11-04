@@ -4,8 +4,8 @@ pipeline {
     environment {
         DOCKER_CREDENTIALS_ID = 'dockerhub'                   // Docker credentials ID
         DOCKER_IMAGE = 'wilsonbolledula/my-kube1'             // Docker Hub repository and image tag
-        HTTP_PROXY = 'http://actual.proxy.server:8080'        // Replace with actual HTTP proxy
-        HTTPS_PROXY = 'http://actual.proxy.server:8080'       // Replace with actual HTTPS proxy
+        HTTP_PROXY = 'http://<actual_ip_or_hostname>:8080'    // Replace with actual HTTP proxy
+        HTTPS_PROXY = 'http://<actual_ip_or_hostname>:8080'   // Replace with actual HTTPS proxy
         NO_PROXY = 'localhost,127.0.0.1,192.168.49.2'         // Include Minikube IP here
     }
 
@@ -17,7 +17,7 @@ pipeline {
                     echo "HTTP_PROXY: %HTTP_PROXY%"
                     echo "HTTPS_PROXY: %HTTPS_PROXY%"
                     echo "NO_PROXY: %NO_PROXY%"
-                    curl -I http://registry.k8s.io || echo "Failed to connect to registry.k8s.io"
+                    curl -I -x %HTTP_PROXY% http://registry.k8s.io || echo "Failed to connect to registry.k8s.io"
                     '''
                 }
             }
@@ -27,7 +27,7 @@ pipeline {
             steps {
                 script {
                     // Build Docker image
-                    bat "docker build -t ${DOCKER_IMAGE} ."
+                    bat "docker build -t ${DOCKER_IMAGE} . 2>&1"
                 }
             }
         }
@@ -38,7 +38,7 @@ pipeline {
                     // Push the Docker image to the repository
                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         bat 'docker login -u %DOCKER_USER% -p %DOCKER_PASS%'
-                        bat "docker push ${DOCKER_IMAGE}"
+                        bat "docker push ${DOCKER_IMAGE} 2>&1"
                     }
                 }
             }
@@ -55,9 +55,9 @@ pipeline {
 
                     // Start Minikube with proxy settings
                     bat '''
-                    minikube start --docker-env HTTP_PROXY=http://actual.proxy.server:8080 ^
-                    --docker-env HTTPS_PROXY=http://actual.proxy.server:8080 ^
-                    --docker-env NO_PROXY=localhost,127.0.0.1,192.168.49.2
+                    minikube start --docker-env HTTP_PROXY=%HTTP_PROXY% ^
+                    --docker-env HTTPS_PROXY=%HTTPS_PROXY% ^
+                    --docker-env NO_PROXY=%NO_PROXY%
                     '''
                 }
             }
