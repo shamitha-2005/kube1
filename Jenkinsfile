@@ -2,8 +2,11 @@ pipeline {
     agent any 
 
     environment {
-        DOCKER_CREDENTIALS_ID = 'dockerhub'               // Docker Hub credentials ID
-        DOCKER_IMAGE = 'wilsonbolledula/my-kube1'         // Docker Hub repository and image tag
+        DOCKER_CREDENTIALS_ID = 'dockerhub'                  // Update with your Docker credentials ID
+        DOCKER_IMAGE = 'wilsonbolledula/my-kube1'            // Your Docker Hub repository and image tag
+        HTTP_PROXY = 'http://your.proxy.server:port'         // Update with your actual proxy, if any
+        HTTPS_PROXY = 'https://your.proxy.server:port'       // Update with your actual proxy, if any
+        NO_PROXY = 'localhost,127.0.0.1,10.0.0.0/8,*.local'  // Adjust as necessary
     }
 
     stages {
@@ -14,6 +17,7 @@ pipeline {
                 }
             }
         }
+
         stage('Push Docker Image') {
             steps {
                 script {
@@ -24,19 +28,53 @@ pipeline {
                 }
             }
         }
+
         stage('Start Minikube') {
             steps {
                 script {
-                    // Start Minikube if not running
-                    bat 'minikube start'
+                    // Stop and delete any previous Minikube instance
+                    bat '''
+                    minikube stop || true
+                    minikube delete || true
+                    '''
+
+                    // Configure Minikube with proxy settings and alternative image repository
+                    def minikubeStartCommand = """
+                    minikube start --image-repository=mirror.gcr.io \
+                        --docker-env HTTP_PROXY=%HTTP_PROXY% \
+                        --docker-env HTTPS_PROXY=%HTTPS_PROXY% \
+                        --docker-env NO_PROXY=%NO_PROXY% \
+                        --extra-config=apiserver.enable-admission-plugins="" \
+                        --addons=none
+                    """
+
+                    // Retry Minikube start if it fails initially
+                    retry(3) {
+                        bat minikubeStartCommand
+                    }
                 }
             }
         }
+
+        stage('Enable Minikube Addons') {
+            steps {
+                script {
+                    // Enable required Minikube addons individually with validation disabled
+                    bat '''
+                    minikube addons enable storage-provisioner --validate=false || true
+                    minikube addons enable default-storageclass --validate=false || true
+                    '''
+                }
+            }
+        }
+
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    // Apply the Kubernetes YAML file from the checked-out repository
-                    bat 'kubectl apply -f kube1.yaml'
+                    // Apply the Kubernetes YAML file from your repository
+                    bat '''
+                    minikube kubectl -- apply -f https://raw.githubusercontent.com/Wilsonbolledula/kube1/main/your-kubernetes-file.yaml
+                    '''
                 }
             }
         }
