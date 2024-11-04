@@ -36,16 +36,15 @@ pipeline {
                 script {
                     // Stop and delete any previous Minikube instance
                     bat '''
-                    minikube stop || true
-                    minikube delete || true
+                    minikube stop || exit 0
+                    minikube delete || exit 0
                     '''
 
                     // Start Minikube with proxy settings
                     bat '''
                     minikube start --docker-env HTTP_PROXY=http://actual.proxy.server:8080 ^
                     --docker-env HTTPS_PROXY=http://actual.proxy.server:8080 ^
-                    --docker-env NO_PROXY=localhost,127.0.0.1,192.168.49.2 ^
-                    --no-proxy=registry.k8s.io
+                    --docker-env NO_PROXY=localhost,127.0.0.1,192.168.49.2
                     '''
                 }
             }
@@ -56,8 +55,8 @@ pipeline {
                 script {
                     // Enable required Minikube addons
                     bat '''
-                    minikube addons enable storage-provisioner --validate=false || true
-                    minikube addons enable default-storageclass --validate=false || true
+                    minikube addons enable storage-provisioner --validate=false || exit 0
+                    minikube addons enable default-storageclass --validate=false || exit 0
                     '''
                 }
             }
