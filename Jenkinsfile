@@ -10,6 +10,19 @@ pipeline {
     }
 
     stages {
+        stage('Debug Proxy Settings') {
+            steps {
+                script {
+                    bat '''
+                    echo "HTTP_PROXY: %HTTP_PROXY%"
+                    echo "HTTPS_PROXY: %HTTPS_PROXY%"
+                    echo "NO_PROXY: %NO_PROXY%"
+                    curl -I http://registry.k8s.io || echo "Failed to connect to registry.k8s.io"
+                    '''
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 script {
