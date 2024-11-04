@@ -5,8 +5,8 @@ pipeline {
         DOCKER_CREDENTIALS_ID = 'dockerhub'                  // Update with your Docker credentials ID
         DOCKER_IMAGE = 'wilsonbolledula/my-kube1'            // Your Docker Hub repository and image tag
         HTTP_PROXY = 'http://your.proxy.server:port'         // Update with your actual proxy, if any
-        HTTPS_PROXY = 'https://your.proxy.server:port'       // Update with your actual proxy, if any
-        NO_PROXY = 'localhost,127.0.0.1,10.0.0.0/8,*.local'  // Adjust as necessary
+        HTTPS_PROXY = 'http://your.proxy.server:port'        // Add HTTPS proxy if needed
+        NO_PROXY = 'localhost,127.0.0.1'                      // Add any necessary non-proxy hosts
     }
 
     stages {
