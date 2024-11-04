@@ -55,8 +55,8 @@ pipeline {
                 script {
                     // Enable required Minikube addons
                     bat '''
-                    minikube addons enable storage-provisioner --validate=false || exit 0
-                    minikube addons enable default-storageclass --validate=false || exit 0
+                    minikube addons enable storage-provisioner || exit 0
+                    minikube addons enable default-storageclass || exit 0
                     '''
                 }
             }
@@ -67,7 +67,7 @@ pipeline {
                 script {
                     // Apply the Kubernetes YAML file from your repository
                     bat '''
-                    minikube kubectl apply -f https://raw.githubusercontent.com/Wilsonbolledula/kube1/main/my-kube1-deployment.yaml
+                    minikube kubectl -- apply -f https://raw.githubusercontent.com/Wilsonbolledula/kube1/main/my-kube1-deployment.yaml
                     '''
                 }
             }
