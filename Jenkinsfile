@@ -4,8 +4,8 @@ pipeline {
     environment {
         DOCKER_CREDENTIALS_ID = 'dockerhub'                   // Docker credentials ID
         DOCKER_IMAGE = 'wilsonbolledula/my-kube1'             // Docker Hub repository and image tag
-        HTTP_PROXY = 'http://actual.proxy.server:8080'        // Replace with actual HTTP proxy
-        HTTPS_PROXY = 'http://actual.proxy.server:8080'       // Replace with actual HTTPS proxy
+        HTTP_PROXY = 'http://actual.proxy.server:8084'        // Replace with actual HTTP proxy
+        HTTPS_PROXY = 'http://actual.proxy.server:8084'       // Replace with actual HTTPS proxy
         NO_PROXY = 'localhost,127.0.0.1,192.168.49.2'         // Include Minikube IP here
     }
 
@@ -42,11 +42,10 @@ pipeline {
 
                     // Start Minikube with proxy settings
                     bat '''
-                    minikube start --docker-env HTTP_PROXY=%HTTP_PROXY% \
-                    --docker-env HTTPS_PROXY=%HTTPS_PROXY% \
-                    --docker-env NO_PROXY=%NO_PROXY% \
-                    --kubernetes-version=v1.30.0
-                    '''
+                    minikube start --docker-env HTTP_PROXY=http://actual.proxy.server:8080 \
+                    --docker-env HTTPS_PROXY=http://actual.proxy.server:8080 \
+                    --docker-env NO_PROXY=localhost,127.0.0.1,192.168.49.2 \
+                    --no-proxy=registry.k8s.io
                 }
             }
         }
@@ -68,7 +67,7 @@ pipeline {
                 script {
                     // Apply the Kubernetes YAML file from your repository
                     bat '''
-                    minikube kubectl -- apply -f https://raw.githubusercontent.com/Wilsonbolledula/kube1/main/your-kubernetes-file.yaml
+                    minikube kubectl -- apply -f https://github.com/Wilsonbolledula/kube1/blob/main/my-kube1-deployment.yaml
                     '''
                 }
             }
