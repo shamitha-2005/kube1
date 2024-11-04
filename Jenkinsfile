@@ -42,8 +42,8 @@ pipeline {
 
                     // Start Minikube with proxy settings
                     bat '''
-                    minikube start --docker-env HTTP_PROXY=http://actual.proxy.server:8084 ^
-                    --docker-env HTTPS_PROXY=http://actual.proxy.server:8084 ^
+                    minikube start --docker-env HTTP_PROXY=http://actual.proxy.server:8080 ^
+                    --docker-env HTTPS_PROXY=http://actual.proxy.server:8080 ^
                     --docker-env NO_PROXY=localhost,127.0.0.1,192.168.49.2 ^
                     --no-proxy=registry.k8s.io
                     '''
