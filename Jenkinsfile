@@ -33,12 +33,26 @@ pipeline {
                     bat 'kubectl apply -f my-kube1-deployment.yaml'
                     bat 'kubectl apply -f my-kube1-service.yaml'
                     
-                    // Enable and access the Minikube dashboard
+                    // Enable Minikube dashboard
                     bat 'minikube addons enable dashboard'
                     
-                    // Retrieve and print the dashboard URL without the invalid timeout flag
-                    def dashboardUrl = bat(script: 'minikube dashboard --url', returnStdout: true).trim()
-                    echo "Kubernetes Dashboard URL: ${dashboardUrl}"
+                    // Retry fetching the dashboard URL until it's available or reach a maximum number of attempts
+                    def maxRetries = 10
+                    def delay = 10 // seconds
+                    def dashboardUrl = ""
+                    for (int i = 0; i < maxRetries; i++) {
+                        dashboardUrl = bat(script: 'minikube dashboard --url', returnStdout: true).trim()
+                        if (dashboardUrl) {
+                            echo "Kubernetes Dashboard URL: ${dashboardUrl}"
+                            break
+                        }
+                        echo "Dashboard not ready yet, retrying in ${delay} seconds..."
+                        sleep delay
+                    }
+                    
+                    if (!dashboardUrl) {
+                        error("Failed to retrieve the Kubernetes Dashboard URL after ${maxRetries} attempts.")
+                    }
                 }
             }
         }
