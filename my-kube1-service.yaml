@@ -5,7 +5,7 @@ metadata:
 spec:
   type: LoadBalancer  # This exposes the service externally
   selector:
-    app: my-kube-app  # Must match the labels in the deployment
+    app: my-kube-app2  # Must match the labels in the deployment
   ports:
     - protocol: TCP
       port: 8082  # External port to access the app

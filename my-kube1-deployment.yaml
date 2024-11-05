@@ -3,22 +3,22 @@ kind: Deployment
 metadata:
   name: my-kube1-deployment
   labels:
-    app: my-kube-app1
+    app: my-kube-app2
 spec:
   replicas: 2  # Number of replicas
   selector:
     matchLabels:
-      app: my-kube-app1
+      app: my-kube-app2
   template:
     metadata:
       labels:
-        app: my-kube-app1
+        app: my-kube-app2
     spec:
       containers:
         - name: my-kube1-container
-          image: wilsonbolledula/my-kube1:latest  # Your Docker image
+          image: wilsonbolledula/my-kube2:latest  # Your Docker image
           ports:
-            - containerPort: 3001  # The port where the Node.js app is listening
+            - containerPort: 3000  # The port where the Node.js app is listening
           resources:
             limits:
               memory: "512Mi"
