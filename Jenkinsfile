@@ -15,7 +15,6 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // Run tests here if you have any
                     echo 'Running tests...'
                 }
             }
@@ -23,10 +22,20 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    bat 'minikube start'
+                    // Start Minikube with proxy settings (if required)
+                    bat 'minikube start --docker-env HTTP_PROXY=http://actual.proxy.server:8080 --docker-env HTTPS_PROXY=http://actual.proxy.server:8080'
+                    
+                    // Delete existing deployment to avoid immutable field issues
+                    bat 'kubectl delete deployment my-kube1-deployment || true' // Ignore errors if it doesn’t exist
+                    
+                    // Deploy resources
                     bat 'kubectl apply -f my-kube1-deployment.yaml'
                     bat 'kubectl apply -f my-kube1-service.yaml'
-                    bat 'minikube dashboard'
+                    
+                    // Enable the dashboard and retrieve the URL
+                    def dashboardUrl = bat(script: 'minikube dashboard --url', returnStdout: true).trim()
+                    echo "Kubernetes Dashboard URL: ${dashboardUrl}"
+                    
                     echo 'Deploying application...'
                 }
             }
