@@ -23,15 +23,19 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Deploy your Docker image
+                    // Start Minikube
                     bat 'minikube start'
+                    
+                    // Enable the dashboard addon
+                    bat 'minikube addons enable dashboard'
+                    
+                    // Deploy your Kubernetes resources
                     bat 'kubectl apply -f my-kube1-deployment.yaml'
                     bat 'kubectl apply -f my-kube1-service.yaml'
                     
-                    // Launch Minikube dashboard in the background
-                    bat 'start /B minikube dashboard --url'
-                    
-                    echo 'Deploying application...'
+                    // Get the Minikube dashboard URL and print it
+                    def dashboardUrl = bat(script: 'minikube dashboard --url', returnStdout: true).trim()
+                    echo "Kubernetes Dashboard URL: ${dashboardUrl}"
                 }
             }
         }
