@@ -36,8 +36,8 @@ pipeline {
                     // Enable and access the Minikube dashboard
                     bat 'minikube addons enable dashboard'
                     
-                    // Retrieve and print the dashboard URL with an extended timeout
-                    def dashboardUrl = bat(script: 'minikube dashboard --url --wait-timeout=120s', returnStdout: true).trim()
+                    // Retrieve and print the dashboard URL without the invalid timeout flag
+                    def dashboardUrl = bat(script: 'minikube dashboard --url', returnStdout: true).trim()
                     echo "Kubernetes Dashboard URL: ${dashboardUrl}"
                 }
             }
