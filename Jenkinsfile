@@ -5,7 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Build your Docker image
+                    // Build and push Docker image
                     bat 'docker build -t w9-dd-app .'
                     bat 'docker tag w9-dd-app:latest wilsonbolledula/w9-dh-app:latest'
                     bat 'docker push wilsonbolledula/w9-dh-app:latest'
@@ -23,18 +23,21 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Start Minikube
-                    bat 'minikube start'
+                    // Start Minikube with proxy settings
+                    bat 'minikube start --docker-env HTTP_PROXY=http://actual.proxy.server:8080 --docker-env HTTPS_PROXY=http://actual.proxy.server:8080'
                     
-                    // Enable the dashboard addon
-                    bat 'minikube addons enable dashboard'
+                    // Enable metrics server addon
+                    bat 'minikube addons enable metrics-server'
                     
-                    // Deploy your Kubernetes resources
+                    // Deploy resources
                     bat 'kubectl apply -f my-kube1-deployment.yaml'
                     bat 'kubectl apply -f my-kube1-service.yaml'
                     
-                    // Get the Minikube dashboard URL and print it
-                    def dashboardUrl = bat(script: 'minikube dashboard --url', returnStdout: true).trim()
+                    // Enable and access the Minikube dashboard
+                    bat 'minikube addons enable dashboard'
+                    
+                    // Retrieve and print the dashboard URL with an extended timeout
+                    def dashboardUrl = bat(script: 'minikube dashboard --url --wait-timeout=120s', returnStdout: true).trim()
                     echo "Kubernetes Dashboard URL: ${dashboardUrl}"
                 }
             }
