@@ -22,10 +22,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    bat 'export MINIKUBE_HOME=$HOME'
-                    bat 'export PATH=$PATH:$MINIKUBE_HOME/.minikube/bin'
-                    bat 'minikube start --driver=docker &
-                    kubectl config use-context minikube'
+                    bat '''
+                    export MINIKUBE_HOME=$HOME
+                    export PATH=$PATH:$MINIKUBE_HOME/.minikube/bin
+                    minikube start --driver=docker
+                    kubectl config use-context minikube
+                    '''
                     bat 'kubectl delete deployment my-kube1-deployment'
                     bat 'kubectl apply -f my-kube1-deployment.yaml'
                     bat 'kubectl apply -f my-kube1-service.yaml'
