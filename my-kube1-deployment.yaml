@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: my-kube1-deployment
   labels:
-    app: my-kube-app2
+    app: my-kube-app1
 spec:
   replicas: 2  # Number of replicas
   selector:
     matchLabels:
-      app: my-kube-app2
+      app: my-kube-app1
   template:
     metadata:
       labels:
-        app: my-kube-app2
+        app: my-kube-app1
     spec:
       containers:
         - name: my-kube1-container
