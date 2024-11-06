@@ -23,6 +23,7 @@ pipeline {
             steps {
                 script {
                     bat 'minikube start'
+                    bat 'kubectl delete deployment my-kube1-deployment'
                     bat 'kubectl apply -f my-kube1-deployment.yaml'
                     bat 'kubectl apply -f my-kube1-service.yaml'
                     bat 'minikube dashboard'
