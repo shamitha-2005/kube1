@@ -34,7 +34,7 @@ pipeline {
                     bat 'kubectl apply -f my-kube1-service.yaml'
                     
                     // Expose the Kubernetes Dashboard service
-                    bat 'minikube service kubernetes-dashboard --url'
+                    bat 'minikube dashboard'
                     
                     echo 'Deploying application...'
                 }
