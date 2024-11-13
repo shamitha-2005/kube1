@@ -22,7 +22,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    bat 'minikube stop'
+                    bat 'minikube delete'
                     bat 'minikube start'
                     bat 'kubectl delete deployment my-kube1-deployment'
                     bat 'kubectl apply -f my-kube1-deployment.yaml'
