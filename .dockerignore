@@ -1,8 +1,9 @@
 # Ignore node_modules
 node_modules/
 
-# Ignore package-lock.json (if you don't need it inside the image)
+# Ignore package-lock.json (optional)
 package-lock.json
 
-# Ignore package.json if not needed in the final image (optional)
-package.json
+# Ignore other unwanted files/folders like logs, tmp files, etc.
+*.log
+*.tmp
